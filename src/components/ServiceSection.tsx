@@ -48,12 +48,17 @@ export function ServicesSection() {
               <Card className="cursor-pointer hover:shadow-lg transition">
                 <CardContent className="flex flex-col items-center justify-center p-4">
                   <div className="w-14 h-14 relative mb-2">
-                    <Image
+                    <img
+  src={`${MEDIA_URL}/${service.image}`}
+  alt={service.name}
+  className="object-contain w-full h-full"
+/>
+                    {/* <Image
                       src={`${MEDIA_URL}/${service.image}`}
                       alt={service.name}
                       fill
                       className="object-contain"
-                    />
+                    /> */}
                   </div>
                   <span className="text-sm font-medium">{service.name}</span>
                 </CardContent>
