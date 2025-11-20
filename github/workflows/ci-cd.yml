@@ -1,0 +1,61 @@
+name: CI/CD Deploy Next.js Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+
+    env:
+      REMOTE_DIR: ${{ secrets.FE_REMOTE_DIR }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js locally
+        run: npm run build
+
+      - name: Prepare SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p $SSH_PORT $SSH_HOST >> ~/.ssh/known_hosts
+
+      - name: Upload via rsync
+        run: |
+          rsync -avz --delete \
+            --exclude node_modules \
+            --exclude .git \
+            --exclude .github \
+            --exclude .env \
+            ./ $SSH_USER@$SSH_HOST:$REMOTE_DIR/
+
+      - name: SSH → Rebuild Docker & Deploy
+        run: |
+          ssh -p $SSH_PORT $SSH_USER@$SSH_HOST << EOF
+            cd "$REMOTE_DIR"
+            echo "--- Rebuilding frontend container ---"
+            docker compose down || true
+            docker compose up -d --build
+            echo "Deployment complete!"
+            docker ps
+          EOF
+
+      - name: Success
+        run: echo "Frontend CI/CD completed!"

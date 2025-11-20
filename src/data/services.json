@@ -1,0 +1,50 @@
+[
+  {
+    "id": 4,
+    "image": "/1.jpeg",
+    "name": "Food",
+    "order": 1
+  },
+  {
+    "id": 2,
+    "image": "/2.jpeg",
+    "name": "Shop",
+    "order": 2
+  },
+  {
+    "id": 8,
+    "image": "/3.jpeg",
+    "name": "LiHaMoto",
+    "order": 3
+  },
+  {
+    "id": 7,
+    "image": "/5.jpeg",
+    "name": "Home",
+    "order": 4
+  },
+  {
+    "id": 6,
+    "image": "/9.jpeg",
+    "name": "Buy/Sell",
+    "order": 5
+  },
+  {
+    "id": 5,
+    "image": "/4.jpeg",
+    "name": "Job",
+    "order": 6
+  },
+  {
+    "id": 3,
+    "image": "/6.jpeg",
+    "name": "Games",
+    "order": 7
+  },
+  {
+    "id": 1,
+    "image": "/2.jpeg",
+    "name": "Delivery",
+    "order": 8
+  }
+]

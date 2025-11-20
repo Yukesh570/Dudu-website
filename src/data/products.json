@@ -1,0 +1,62 @@
+[
+  {
+    "id": 8,
+    "image": "serviceList/lihaMoto/crankshaft.png",
+    "video": "videos/1.mp4",
+    "name": "Doll helicoptor",
+    "category": "LiHaMoto",
+    "description": "Component is essential for converting the linear motion of the pistons.",
+    "order": 3,
+    "price": 3000,
+    "rate": 3,
+    "count": 21
+  },
+  {
+    "id": 9,
+    "image": "serviceList/lihaMoto/cylinderHead.png",
+    "video": "videos/2.mp4",
+    "name": "Cylinder Head",
+    "category": "LiHaMoto",
+    "description": "Motocycle cylinder head assembly",
+    "order": 4,
+    "price": 4500,
+    "rate": 4,
+    "count": 4
+  },
+  {
+    "id": 11,
+    "image": "serviceList/lihaMoto/buttons.png",
+    "video": "videos/4.mp4",
+    "name": "Lights",
+    "category": "LiHaMoto",
+    "description": "Bike Buttons with smooth click and very durable",
+    "order": 1,
+    "price": 700,
+    "rate": 4,
+    "count": 21
+  },
+  {
+    "id": 7,
+    "image": "serviceList/lihaMoto/shield.png",
+    "video": "videos/5.mp4",
+    "name": "Led Magnetic Charger",
+    "category": "LiHaMoto",
+    "description": "Cover for moterbiek.It is build to withstand scratchs and damages",
+    "order": 3,
+    "price": 2000,
+    "rate": 3,
+    "count": 23
+  },
+  {
+    "id": 10,
+    "image": "serviceList/lihaMoto/engineGear.png",
+    "video": "videos/3.mp4",
+    "name": "Helicoptor",
+    "category": "LiHaMoto",
+    "description": "A main and counter shaft set for a motorcycle or pit bike engines",
+    "order": 2,
+    "price": 6000,
+    "rate": 5,
+    "count": 21
+  }
+]
