@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REMOTE_DIR: ${{ secrets.FE_REMOTE_DIR }}
+      REMOTE_DIR: ${{ secrets.REMOTE_APP_DIR }}
       SSH_USER: ${{ secrets.SSH_USER }}
       SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_PORT: ${{ secrets.SSH_PORT }}
@@ -51,8 +51,8 @@ jobs:
           ssh -p $SSH_PORT $SSH_USER@$SSH_HOST << EOF
             cd "$REMOTE_DIR"
             echo "--- Rebuilding frontend container ---"
-            docker compose down || true
-            docker compose up -d --build
+            docker compose -f docker-compose-react.yml down || true
+            docker compose -f docker-compose-react.yml up -d --build 
             echo "Deployment complete!"
             docker ps
           EOF

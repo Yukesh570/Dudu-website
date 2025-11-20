@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
         port: "3000",              // specify port separately
         pathname: "/**",      
       },
+        {
+        protocol: "https",
+        hostname: "backend.dudusoftware.com",
+        port: "", 
+        pathname: "/**",
+      },
     ],
   },
 };
