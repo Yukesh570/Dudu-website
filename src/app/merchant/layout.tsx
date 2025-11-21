@@ -1,7 +1,9 @@
 "use client";
-import { ReactNode } from "react";
+
+import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -11,67 +13,133 @@ import {
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 
+import {
+  Home,
+  ShoppingCart,
+  Package,
+  Users,
+  BarChart3,
+  Tag,
+  ChevronDown,
+} from "lucide-react";
+
 export default function MerchantLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+
   const lastSegment = pathname.split("/").filter(Boolean).pop() || "Dashboard";
   const formattedTitle = lastSegment
     .replace(/-/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
+  const [openMenu, setOpenMenu] = useState<string>("");
+
+  const toggleMenu = (label: string) => {
+    setOpenMenu((prev) => (prev === label ? "" : label));
+  };
+
+  const menuItems = [
+    {
+      href: "/merchant",
+      label: "Dashboard",
+      icon: <Home className="w-4 h-4" />,
+    },
+    {
+      href: "/merchant/orders",
+      label: "Orders",
+      icon: <ShoppingCart className="w-4 h-4" />,
+    },
+    {
+      label: "Products",
+      icon: <Package className="w-4 h-4" />,
+      sub: [
+        { href: "/merchant/products", label: "Collections" },
+        { href: "/merchant/inventory", label: "Inventory" },
+      ],
+    },
+    {
+      href: "/merchant/customers",
+      label: "Customers",
+      icon: <Users className="w-4 h-4" />,
+    },
+    {
+      href: "/merchant/analytics",
+      label: "Analytics",
+      icon: <BarChart3 className="w-4 h-4" />,
+    },
+    {
+      href: "/merchant/payments",
+      label: "Payments",
+      icon: <Tag className="w-4 h-4" />,
+    },
+  ];
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside
-        className="w-64 flex flex-col p-4 border-r"
-        style={{
-          backgroundColor: "var(--color-sidebar)",
-          color: "var(--color-sidebar-foreground)",
-          borderColor: "var(--color-sidebar-border)",
-        }}
-      >
+      <aside className="w-64 flex flex-col p-4 border-r bg-gray-100 text-gray-900">
         <h2 className="text-xl font-bold mb-6">Merchant Panel</h2>
-        <nav className="flex flex-col gap-2">
-          {[
-            { href: "/merchant", label: "Dashboard" },
-            { href: "/merchant/products", label: "Products" },
-            { href: "/merchant/payments", label: "Payments" },
-            { href: "/merchant/orders", label: "Orders" },
-            { href: "/merchant/explore", label: "Explore" },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="p-2 rounded-md transition-colors"
-              style={{
-                color: "var(--color-sidebar-foreground)",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor =
-                  "var(--color-background)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
-            >
-              {link.label}
-            </Link>
+
+        <nav className="flex flex-col gap-1">
+          {menuItems.map((item) => (
+            <div key={item.label}>
+              {/* If item has sub menu, DO NOT navigate */}
+              {item.sub ? (
+                <div
+                  onClick={() => toggleMenu(item.label)}
+                  className="flex items-center justify-between p-2 rounded-md cursor-pointer hover:bg-gray-200"
+                >
+                  <div className="flex items-center gap-2">
+                    {item.icon}
+                    {item.label}
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      openMenu === item.label ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <Link
+                  href={item.href!}
+                  className={`flex items-center gap-2 p-2 rounded-md transition-colors hover:bg-gray-200 ${
+                    pathname === item.href ? "bg-gray-300 font-medium" : ""
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </Link>
+              )}
+
+              {/* Submenu */}
+              {item.sub && openMenu === item.label && (
+                <div className="ml-8 mt-1 flex flex-col gap-1 text-sm">
+                  {item.sub.map((subItem) => (
+                    <Link
+                      key={subItem.href}
+                      href={subItem.href}
+                      className={`p-1 rounded-md hover:bg-gray-200 transition-colors ${
+                        pathname === subItem.href
+                          ? "font-medium text-black"
+                          : ""
+                      }`}
+                    >
+                      {subItem.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </nav>
       </aside>
 
       {/* Main content */}
-      <main
-        className="flex-1 p-6"
-        style={{
-          backgroundColor: "var(--color-background)",
-          color: "var(--color-foreground)",
-        }}
-      >
+      <main className="flex-1 p-6">
         <Breadcrumb className="mb-4">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/merchant">Dashboard</Link>
+                <Link href="/merchant">Home</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

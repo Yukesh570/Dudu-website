@@ -153,9 +153,86 @@ export async function getCart() {
   return res.json();
 }
 
+/* -------------------- Order APIs -------------------- */
+export async function getMerchantOrders() {
+  return fetchWithAuth(`/order/getByMerchant`);
+}
+
+export async function updateOrderStatus(orderId: number, status: string) {
+  return fetchWithAuth(`/order/edit/${orderId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function getOrderById(orderId: number) {
+  return fetchWithAuth(`/order/getOne/${orderId}`);
+}
+
+export async function getAllOrders() {
+  return fetchWithAuth(`/order/getAll`);
+}
+
+export async function createOrder(orderData: {
+  productId?: number;
+  quantity?: number;
+  items?: Array<{ productId: number; quantity: number }>;
+  [key: string]: unknown;
+}) {
+  return fetchWithAuth(`/order/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderData),
+  });
+}
+
+export async function deleteOrder(orderId: number) {
+  return fetchWithAuth(`/order/delete/${orderId}`, {
+    method: "DELETE",
+  });
+}
+
 /* -------------------- Payments APIs -------------------- */
 export async function getPayments() {
   return fetchWithAuth(`/payment/getAll`);
+}
+
+export async function getPaymentById(paymentId: number) {
+  return fetchWithAuth(`/payment/getOne/${paymentId}`);
+}
+
+export async function createPayment(paymentData: {
+  amount: number;
+  paymentMethod: string;
+  productIds?: number[];
+  transactionId?: string;
+  [key: string]: unknown;
+}) {
+  return fetchWithAuth(`/payment/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(paymentData),
+  });
+}
+
+export async function updatePayment(paymentId: number, paymentData: {
+  amount?: number;
+  paymentMethod?: string;
+  paymentstatus?: string;
+  [key: string]: unknown;
+}) {
+  return fetchWithAuth(`/payment/edit/${paymentId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(paymentData),
+  });
+}
+
+export async function deletePayment(paymentId: number) {
+  return fetchWithAuth(`/payment/delete/${paymentId}`, {
+    method: "DELETE",
+  });
 }
 
 /* -------------------- User APIs -------------------- */
@@ -167,13 +244,22 @@ export async function getAllUsers() {
   return fetchWithAuth(`/auth/getAll`);
 }
 
-
 /* -------------------- Products APIs -------------------- */
 export async function getProductById(productId: number) {
   return fetchWithAuth(`/product/getOne/${productId}`);
 }
 
-/* -------------------- Product APIs -------------------- */
+export async function getAllProducts() {
+  return fetchWithAuth(`/product/getAll`);
+}
+
+// Public endpoint - no auth required
+export async function getAllProductsPublic() {
+  const res = await fetch(`${API_BASE}/product/getAll`);
+  if (!res.ok) throw new Error("Failed to fetch products");
+  return res.json();
+}
+
 export async function createProduct(formData: FormData) {
   const token = getAuthToken();
   if (!token) throw new Error("Not logged in");
@@ -231,8 +317,4 @@ export async function deleteProduct(id: number) {
   }
 
   return json;
-}
-
-export async function getAllProducts() {
-  return fetchWithAuth(`/product/getAll`);
 }

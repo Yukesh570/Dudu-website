@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -12,10 +14,15 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
-import { getAuthToken } from "@/lib/apiUtils";
+import {
+  getAuthToken,
+  getAllProductsPublic,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "@/lib/apiUtils";
 import ReactSimpleWysiwyg from "react-simple-wysiwyg";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 const MEDIA_URL = process.env.NEXT_PUBLIC_MEDIA_URL;
 
 type Product = {
@@ -63,8 +70,7 @@ export default function ProductsPage() {
   async function fetchProducts() {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/product/getAll`);
-      const json = await res.json();
+      const json = await getAllProductsPublic();
       if (json.status === "success") setProducts(json.data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -128,21 +134,7 @@ export default function ProductsPage() {
   async function handleDelete(id: number) {
     if (!confirm("Delete this product?")) return;
     try {
-      const token = getAuthToken();
-      if (!token) throw new Error("Not logged in");
-
-      const res = await fetch(`${API_BASE}/product/delete/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const json = await res.json();
-      if (!res.ok || json.status !== "success") {
-        throw new Error(json.message || "Failed to delete product");
-      }
-
+      await deleteProduct(id);
       fetchProducts();
     } catch (err) {
       console.error("Error deleting:", err);
@@ -163,27 +155,11 @@ export default function ProductsPage() {
     if (formData.image) body.append("image", formData.image);
     if (formData.video) body.append("video", formData.video);
 
-    // Fixed endpoint - use /product/edit for updates
-    const endpoint = editMode
-      ? `${API_BASE}/product/edit/${formData.id}`
-      : `${API_BASE}/product/create`;
-
     try {
-      const token = getAuthToken();
-      if (!token) throw new Error("Not logged in");
-
-      const res = await fetch(endpoint, {
-        method: editMode ? "PUT" : "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // Don't set Content-Type - browser will set it with boundary for FormData
-        },
-        body,
-      });
-
-      const json = await res.json();
-      if (!res.ok || json.status !== "success") {
-        throw new Error(json.message || "Failed to save product");
+      if (editMode) {
+        await updateProduct(formData.id, body);
+      } else {
+        await createProduct(body);
       }
 
       setDialogOpen(false);

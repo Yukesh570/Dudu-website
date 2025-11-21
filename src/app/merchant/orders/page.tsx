@@ -2,7 +2,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getUserById } from "@/lib/apiUtils";
+import {
+  getUserById,
+  getMerchantOrders,
+  updateOrderStatus,
+} from "@/lib/apiUtils";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -13,7 +17,6 @@ import {
 } from "@/components/ui/select";
 
 const MEDIA_URL = process.env.NEXT_PUBLIC_MEDIA_URL;
-const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 type OrderItem = {
   id: number;
@@ -64,35 +67,21 @@ export default function MerchantOrdersPage() {
   );
 
   useEffect(() => {
-    fetchMerchantOrders();
+    fetchMerchantOrdersData();
 
     const interval = setInterval(() => {
-      fetchMerchantOrders();
+      fetchMerchantOrdersData();
     }, 15000);
 
     return () => clearInterval(interval);
   }, []);
 
-  async function fetchMerchantOrders() {
+  async function fetchMerchantOrdersData() {
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("No auth token");
-      }
+      const response = await getMerchantOrders();
 
-      const res = await fetch(`${API_BASE}/order/getByMerchant`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error(`Failed to fetch orders: ${res.status}`);
-      }
-
-      const data = await res.json();
-      if (data.status === "success") {
-        const sortedOrders = data.data.sort(
+      if (response.status === "success") {
+        const sortedOrders = response.data.sort(
           (a: Order, b: Order) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
@@ -109,7 +98,9 @@ export default function MerchantOrdersPage() {
 
   async function handleViewUser(userId: number) {
     if (usersCache[userId]) return;
+
     setLoadingUsers((prev) => ({ ...prev, [userId]: true }));
+
     try {
       const res = await getUserById(userId);
       if (res.status === "success") {
@@ -126,27 +117,9 @@ export default function MerchantOrdersPage() {
     setUpdatingOrders((prev) => ({ ...prev, [orderId]: true }));
 
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("No auth token");
-      }
+      const response = await updateOrderStatus(orderId, newStatus);
 
-      const res = await fetch(`${API_BASE}/order/edit/${orderId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!res.ok) {
-        throw new Error(`Failed to update order: ${res.status}`);
-      }
-
-      const data = await res.json();
-
-      if (data.status === "success") {
+      if (response.status === "success") {
         // Update local state
         setOrders((prev) =>
           prev.map((order) =>

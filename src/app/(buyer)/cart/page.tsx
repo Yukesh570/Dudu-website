@@ -116,10 +116,6 @@ export default function CartPage() {
           ))}
         </TableBody>
       </Table>
-
-      <div className="mt-6 flex justify-end">
-        <Button size="lg">Proceed to Checkout</Button>
-      </div>
     </section>
   );
 }
