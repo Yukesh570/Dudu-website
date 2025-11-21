@@ -1,10 +1,13 @@
-import { ServicesSection } from "@/components/ServiceSection";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  return (
-    
-    <main className="container mx-auto px-4">
-      <ServicesSection />
-    </main>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/login");
+  }, [router]);
+
+  return null; // Optional: show nothing
 }

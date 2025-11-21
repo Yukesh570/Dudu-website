@@ -71,15 +71,22 @@ export default function MerchantLayout({ children }: { children: ReactNode }) {
       label: "Payments",
       icon: <Tag className="w-4 h-4" />,
     },
+    {
+      href: "/merchant/explore",
+      label: "Explore",
+      icon: <Tag className="w-4 h-4" />,
+    },
   ];
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 flex flex-col p-4 border-r bg-gray-100 text-gray-900">
-        <h2 className="text-xl font-bold mb-6">Merchant Panel</h2>
+    <div className="flex h-screen overflow-hidden">
+      {/* Fixed Sidebar */}
+      <aside className="w-64 flex flex-col border-r bg-gray-100 text-gray-900 h-full overflow-y-auto">
+        <div className="p-4 sticky top-0 bg-gray-100 z-10 border-b border-gray-200">
+          <h2 className="text-xl font-bold">Merchant Panel</h2>
+        </div>
 
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-1 p-4 flex-1">
           {menuItems.map((item) => (
             <div key={item.label}>
               {/* If item has sub menu, DO NOT navigate */}
@@ -133,23 +140,25 @@ export default function MerchantLayout({ children }: { children: ReactNode }) {
         </nav>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-6">
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/merchant">Home</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{formattedTitle}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+      {/* Main content - Scrollable */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="p-6">
+          <Breadcrumb className="mb-4">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/merchant">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{formattedTitle}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
 
-        {children}
+          {children}
+        </div>
       </main>
     </div>
   );

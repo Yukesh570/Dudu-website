@@ -78,14 +78,14 @@ export default function MerchantDashboard() {
           </Link>
         </div>
 
-        <div className="h-64">
+        <div className="h-64" style={{ overflow: "visible" }}>
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
+            <PieChart margin={{ top: 20, right: 80, bottom: 20, left: 80 }}>
               <Pie
                 data={categoryData}
                 cx="50%"
                 cy="50%"
-                outerRadius={100}
+                outerRadius={80}
                 dataKey="value"
                 nameKey="name"
                 label={({ name, percent }) =>

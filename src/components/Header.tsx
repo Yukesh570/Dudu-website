@@ -47,36 +47,47 @@ export function Header() {
       : customerMenu;
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="text-2xl text-blue-600 font-bold">
-          dudu
+    <header className="bg-blue-600 text-white shadow-md">
+      <div className="container mx-auto flex items-center justify-between p-4">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="text-white text-xl font-bold flex items-center gap-2"
+        >
+          <span>DuDu</span>
         </Link>
+
+        {/* Menu */}
         <nav className="flex items-center gap-6">
           {menu.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="flex flex-col items-center text-text hover:text-primary text-sm"
+              className="flex items-center gap-1 hover:text-gray-200"
             >
-              <item.icon className="w-5 h-5 mb-1" />
+              <item.icon size={20} className="text-white" />
               {item.name}
             </Link>
           ))}
+
+          {/* Login / Logout */}
           {isLoggedIn ? (
             <button
-              onClick={logout}
-              className="flex flex-col items-center text-text hover:text-primary text-sm"
+              onClick={() => {
+                logout();
+                setIsLoggedIn(false);
+              }}
+              className="flex items-center gap-1 hover:text-gray-200"
             >
-              <LogOut className="w-5 h-5 mb-1" />
+              <LogOut size={20} className="text-white" />
               Logout
             </button>
           ) : (
             <Link
               href="/login"
-              className="flex flex-col items-center text-text hover:text-primary text-sm"
+              className="flex items-center gap-1 hover:text-gray-200"
             >
-              <LogIn className="w-5 h-5 mb-1" />
+              <LogIn size={20} className="text-white" />
               Login
             </Link>
           )}

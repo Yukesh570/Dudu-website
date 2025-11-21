@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { login } from "@/lib/apiUtils";
+import { login, getUserType } from "@/lib/apiUtils";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,13 +19,20 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const token = await login(username, password);
+      await login(username, password); // just saves token, no redirect
       toast.success("Login successful!", {
         description: `Welcome back, ${username}!`,
       });
 
-      console.log("Token saved:", token);
-      router.push("/");
+      // Determine where to redirect based on userType
+      const userType = getUserType(); // admin, merchant, or other
+      if (userType === "admin") {
+        router.push("/admin");
+      } else if (userType === "merchant") {
+        router.push("/merchant");
+      } else {
+        router.push("/"); // default route for other users
+      }
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error("Login failed", {
