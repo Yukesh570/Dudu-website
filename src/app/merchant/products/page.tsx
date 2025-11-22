@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,9 +12,7 @@ import {
   updateProduct,
   deleteProduct,
 } from "@/lib/apiUtils";
-import ProductFilters, {
-  ProductFiltersType,
-} from "./components/ProductFilters";
+import GlobalFilters, { FilterField } from "@/components/Filters"; // import your global filters
 import ProductTable, { Product } from "./components/ProductTable";
 import ProductFormDialog from "./components/ProductFormDialog";
 
@@ -24,7 +22,8 @@ export default function ProductsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
-  const [filters, setFilters] = useState<ProductFiltersType>({
+
+  const [filters, setFilters] = useState<Record<string, string>>({
     name: "",
     category: "",
     minPrice: "",
@@ -113,7 +112,6 @@ export default function ProductsPage() {
       } else {
         await createProduct(body);
       }
-
       setDialogOpen(false);
       fetchProducts();
     } catch (err) {
@@ -121,6 +119,23 @@ export default function ProductsPage() {
       alert(err instanceof Error ? err.message : "Failed to save product");
     }
   }
+
+  const filterFields: FilterField[] = [
+    { key: "name", placeholder: "Search name...", className: "w-48" },
+    { key: "category", placeholder: "Category...", className: "w-48" },
+    {
+      key: "minPrice",
+      placeholder: "Min Price",
+      type: "number",
+      className: "w-32",
+    },
+    {
+      key: "maxPrice",
+      placeholder: "Max Price",
+      type: "number",
+      className: "w-32",
+    },
+  ];
 
   return (
     <div className="p-6 space-y-6">
@@ -131,10 +146,12 @@ export default function ProductsPage() {
         </Button>
       </div>
 
-      <ProductFilters
+      {/* 🔥 Replaced ProductFilters with GlobalFilters */}
+      <GlobalFilters
         filters={filters}
         setFilters={setFilters}
         onReset={resetFilters}
+        fields={filterFields}
       />
 
       <ProductTable

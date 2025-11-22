@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -247,16 +246,16 @@ export default function MerchantOrdersPage() {
                       </Button>
                     )}
                   </td>
-                  <td className="px-4 py-2 border">
-                    <div className="flex flex-col gap-2">
+                  <td className="px-4 py-2 border align-top max-w-[220px]">
+                    <div className="space-y-3 max-h-40 overflow-y-auto pr-2">
                       {order.__orderItems__.map((item) => (
-                        <div key={item.id} className="flex items-center gap-2">
+                        <div key={item.id} className="flex items-start gap-2">
                           <img
                             src={`${MEDIA_URL}/${item.__product__.image}`}
                             alt={item.__product__.name}
-                            className="w-8 h-8 object-contain rounded"
+                            className="w-10 h-10 object-cover rounded"
                           />
-                          <div className="flex-1">
+                          <div className="leading-tight">
                             <p className="font-medium text-sm">
                               {item.__product__.name}
                             </p>
@@ -271,6 +270,7 @@ export default function MerchantOrdersPage() {
                       ))}
                     </div>
                   </td>
+
                   <td className="px-4 py-2 border">
                     <div className="flex flex-col gap-1">
                       {order.__orderItems__.map((item) => (

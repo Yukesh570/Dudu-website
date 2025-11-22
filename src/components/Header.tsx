@@ -10,12 +10,15 @@ import {
   LogIn,
   Store,
   Shield,
+  Menu,
+  X,
 } from "lucide-react";
 import { getAuthToken, getUserType, logout } from "@/lib/apiUtils";
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(!!getAuthToken());
@@ -57,8 +60,8 @@ export function Header() {
           <span>DuDu</span>
         </Link>
 
-        {/* Menu */}
-        <nav className="flex items-center gap-6">
+        {/* Desktop Menu */}
+        <nav className="hidden md:flex items-center gap-6">
           {menu.map((item) => (
             <Link
               key={item.name}
@@ -70,7 +73,6 @@ export function Header() {
             </Link>
           ))}
 
-          {/* Login / Logout */}
           {isLoggedIn ? (
             <button
               onClick={() => {
@@ -92,7 +94,57 @@ export function Header() {
             </Link>
           )}
         </nav>
+
+        {/* Mobile Hamburger */}
+        <button
+          className="md:hidden"
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          {mobileOpen ? <X size={26} /> : <Menu size={26} />}
+        </button>
       </div>
+
+      {/* Mobile Menu Drawer */}
+      {mobileOpen && (
+        <div className="md:hidden bg-blue-700 px-4 pb-4 animate-slideDown">
+          <nav className="flex flex-col gap-4 mt-2">
+            {menu.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 text-white hover:text-gray-200"
+              >
+                <item.icon size={20} className="text-white" />
+                {item.name}
+              </Link>
+            ))}
+
+            {isLoggedIn ? (
+              <button
+                onClick={() => {
+                  logout();
+                  setIsLoggedIn(false);
+                  setMobileOpen(false);
+                }}
+                className="flex items-center gap-2 text-left hover:text-gray-200"
+              >
+                <LogOut size={20} />
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 hover:text-gray-200"
+              >
+                <LogIn size={20} />
+                Login
+              </Link>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

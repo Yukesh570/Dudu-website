@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import GlobalFilters from "@/components/Filters";
 import { getAllProductsPublic, updateProduct } from "@/lib/apiUtils";
 
 const MEDIA_URL = process.env.NEXT_PUBLIC_MEDIA_URL;
@@ -16,18 +16,11 @@ type Product = {
   draftCount?: number;
 };
 
-interface InventoryFilters {
-  name: string;
-  category: string;
-  minCount: string;
-  maxCount: string;
-}
-
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<number | null>(null);
-  const [filters, setFilters] = useState<InventoryFilters>({
+  const [filters, setFilters] = useState<Record<string, string>>({
     name: "",
     category: "",
     minCount: "",
@@ -99,38 +92,28 @@ export default function InventoryPage() {
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Inventory</h1>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2 items-end">
-        <Input
-          placeholder="Search name..."
-          value={filters.name}
-          onChange={(e) => setFilters({ ...filters, name: e.target.value })}
-          className="w-48"
-        />
-        <Input
-          placeholder="Category..."
-          value={filters.category}
-          onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-          className="w-48"
-        />
-        <Input
-          placeholder="Min Count"
-          type="number"
-          value={filters.minCount}
-          onChange={(e) => setFilters({ ...filters, minCount: e.target.value })}
-          className="w-32"
-        />
-        <Input
-          placeholder="Max Count"
-          type="number"
-          value={filters.maxCount}
-          onChange={(e) => setFilters({ ...filters, maxCount: e.target.value })}
-          className="w-32"
-        />
-        <Button variant="outline" onClick={resetFilters}>
-          <X className="h-4 w-4 mr-1" /> Clear
-        </Button>
-      </div>
+      {/* 🔥 REPLACED FILTERS */}
+      <GlobalFilters
+        filters={filters}
+        setFilters={setFilters}
+        onReset={resetFilters}
+        fields={[
+          { key: "name", placeholder: "Search name...", className: "w-48" },
+          { key: "category", placeholder: "Category...", className: "w-48" },
+          {
+            key: "minCount",
+            placeholder: "Min Count",
+            type: "number",
+            className: "w-32",
+          },
+          {
+            key: "maxCount",
+            placeholder: "Max Count",
+            type: "number",
+            className: "w-32",
+          },
+        ]}
+      />
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -141,17 +124,16 @@ export default function InventoryPage() {
               key={p.id}
               className="border rounded-lg p-3 flex items-center gap-3"
             >
-              {/* Product Image */}
               <img
                 src={`${MEDIA_URL}/${p.image}`}
                 alt={p.name}
                 className="h-12 w-12 object-cover rounded flex-shrink-0"
               />
-              {/* Product Name */}
+
               <h2 className="font-semibold flex-1 min-w-0 truncate">
                 {p.name}
               </h2>
-              {/* Count Input */}
+
               <Input
                 type="number"
                 className="w-16 text-center flex-shrink-0"
@@ -162,7 +144,7 @@ export default function InventoryPage() {
                   if (val >= 0) setDraft(p.id, val);
                 }}
               />
-              {/* Save Button - only show when changes exist */}
+
               {hasChanges && (
                 <Button
                   size="sm"
@@ -176,6 +158,7 @@ export default function InventoryPage() {
             </div>
           );
         })}
+
         {!loading && filteredProducts().length === 0 && (
           <p className="text-muted-foreground">No products found.</p>
         )}
